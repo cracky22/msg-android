@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="de-De">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!--Important, firstLoad-->
+    <script src="./src/js/version.js"></script>
+    <script src="./src/js/logger.js"></script>
+    <link rel="stylesheet" href="./src/css/style.css">
+    <link rel="stylesheet" href="./src/3rd-party/slide-unlock.css">
+    <!--Material Design-->
+    <link rel="stylesheet" href="./src/mdl/googleAPI-style.css">
+    <link rel="stylesheet" href="./src/mdl/mdl-style.css">
+    <script src="./src/mdl/mdl-script.js"></script>
+
+    <script src="./src/js/haptic_feedback.js"></script>
+    <script src="./src/3rd-party/jquery.js"></script>
+    <script src="./src/3rd-party/forge.js"></script>
+    <script src="./src/js/certificate.js"></script>
+    <script src="./src/js/wc_set.js"></script>
+    <script src="./src/js/main.js"></script>
+    <link rel="manifest" href="./src/manifest.json">
+</head>
+
+<style>
+    .section {
+        display: none !important;
+    }
+
+    .active {
+        display: block !important;
+    }
+
+    button.checkbox {
+        background: none;
+        background-color: none;
+        border: none;
+    }
+
+    h4 {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    a {
+        color: rgb(77, 77, 251);
+        font-weight: 550;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    uu {
+        background-color: #7b7b7b38;
+        border-radius: 4px;
+    }
+
+    p.infotext {
+        max-width: 95%;
+
+    }
+
+    stl {
+        background-color: rgb(202, 201, 201);
+        border-radius: 5px;
+    }
+
+    button.wortcode {
+        height: 90px;
+        width: 100px;
+        margin-right: 5px;
+        margin-top: 4px;
+        border-radius: 10px;
+        border: 2px solid black;
+    }
+
+    button.wortcode:active,
+    button.wortcode:active {
+        background-color: greenyellow !important;
+    }
+
+    .color-changing-div {
+        animation: blink 0.5s infinite alternate;
+    }   
+    @keyframes blink {
+        0% {
+            background-color: rgb(212, 69, 100);
+        }
+        100% {
+            background-color: #ff0101;
+        }
+    }
+
+    .mdl-switch {
+        transform: scale(1.15);
+        margin-top: 5.5px;
+    }
+    div.devContent {
+        border: 2.5px solid #1ba77df9;
+        border-radius: 25px;
+        max-width: 225px;
+        width: 60%;
+    }
+
+    .scroll-container {
+        overflow-x: auto; 
+        overflow-x: scroll; 
+        width: 1000px; 
+        min-height: 800px;
+        height: auto;
+        overflow: auto; 
+        border: 1px solid #ccc;
+    }
+    .json-content {
+        overflow-x: auto; 
+        overflow-x: scroll; 
+        white-space: pre; 
+        font-family: monospace;
+        font-size: 12px;
+    }
+    .ptrn {
+        border-radius: 0px;
+    }
+    .ptrn:hover {
+        background-color: #020202;
+        color: white; 
+    }
+    .ptrn:active {
+        border: 2px solid lime;
+    }
+</style>
+
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header" onclick="vibrate('pattern', 'p_oc');">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title" id="masterTitle">
+                    Einstellungen
+                </span>
+                <div class="mdl-layout-spacer"></div>
+                <a class="mdl-navigation__link" id="home" onclick="vibrate('pattern', 'p_oc');" href="./index.html?comeFrom=settings.html"><i class="material-icons">home</i></a>
+                <a class="mdl-navigation__link" id="lock" onclick="lock();"><i class="material-icons">lock</i></a>
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title" id="menuTitle">Menü</span>
+            <nav class="mdl-navigation">
+                <button onclick="vibrate('pattern', 'p_oc'); window.location.href='./index.html?comeFrom=settings.html';" 
+                id="homeButton" class="menub mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                    Home
+                </button>
+                <button onclick="lock();" id="lockButton"
+                    class="menub mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                    Sperren
+                </button>
+                <br>
+                <script>
+                    function usrSubFB() {
+                        fbURL = 'https://cracky.ddns.net/services/apps/crackyOS/application/com.crackyOS.pyProjects/msg-encrypt/android.app/fb/submit-feedback.html?token=';
+                        token = localStorage.getItem("token");
+                        fbTx = fbURL + token;
+                        window.location.href = fbTx;
+                    }
+                </script>
+                <a onclick="usrSubFB();" style="text-align: center; margin-right: 30px;">Feedback geben</a>
+                <br><br><br><br><br><br><br>
+                <p id="dpVers" style="position: fixed; left: 40%; transform: translateX(-50%); bottom: 10px;" onclick="easterEgg();">Version: UNSET</p>
+                <script>
+                    var dpVers = document.getElementById("dpVers");
+                    dpVers.innerHTML = "Version: " + localStorage.getItem("version");
+                </script>
+            </nav>
+        </div>
+        <main class="mdl-layout__content">
+            <elm id="top"></elm>
+            <div id="p1" class="mdl-progress mdl-js-progress" style="visibility: hidden; width: 100%;"></div>
+            <div class="page-content">
+                <center>
+                    <div id="settings" class="section active">
+                        <div id="activateBtn"></div>
+                        <script>
+                            //zeige meldung wenn runtime nicht aktive / false
+                            if (sessionStorage.getItem("runtime") !== "true") {
+                                var activHTML = `<br><button onclick="window.location.href='./activate.html?comeFrom=settings.html';" id="rtFprompt" style="height: 80px; color: white;" 
+                                                class="color-changing-div mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                                                    <b>aktivierung erforderlich</b><br><i>klicke <b>hier</b> um msg zu aktivieren</i>
+                                                </button>`;
+                                document.getElementById("activateBtn").innerHTML = activHTML;
+                            } if (sessionStorage.getItem("certificate") !== "valid") {
+                                var activHTML = `<br><p id="certInvalidPrompt" onclick="section('certInvalid', 'settings');"
+                                style="width: 280px!important; border-radius: 8px!important; padding: 1px;" 
+                                class="certPrompt">Das <b>Sicherheitszertifikat</b> ist Abgelaufen. Bitte installiere die
+                                neusten Updates um msg mit bestmöglicher Sicherheit zu nutzen.<br><small>(klicke für mehr Infos.)</small></p>`;
+                                document.getElementById("activateBtn").innerHTML = activHTML;
+                            } if (sessionStorage.getItem("certHash") !== "valid") {
+                                var activHTML = `<br><p id="certHashPrompt" onclick="section('certHash', 'settings');"
+                                style="width: 280px!important; border-radius: 8px!important; padding: 1px;" 
+                                class="certPrompt">Das <b>Sicherheitszertifikat</b> stammt <b>nicht</b><br> <u>vom Entwickler</u>. Bitte installiere die
+                                neusten Updates um msg mit bestmöglicher Sicherheit zu nutzen.<br><small>(klicke für mehr Infos.)</small></p>`;
+                                document.getElementById("activateBtn").innerHTML = activHTML;
+                            }
+                        </script>
+
+                        <!--debug menü section / debugging functions-->
+                        <div id="debugfield"></div>
+                        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+                            for="demo-menu-lower-left">
+                            <button onclick="window.location.href = 'settings.html';" style="float: right!important; margin-right: 5px;">r</button>
+                            <li class="mdl-menu__item" disabled>
+                                msg-server&nbsp;&nbsp;<small>[use http / https]</small>
+                            </li>
+                            <input type="text" id="ip">
+                            <button onclick="saveIP();">save</button>
+                            <button onclick="resetIP();">reset</button>
+                            <button onclick="reloadIP();">reload</button>
+                            <script>
+                                document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                function saveIP() {
+                                    ip = document.getElementById("ip").value 
+                                    if (ip === "0.0.0.0") {
+                                        document.getElementById("ip").value = "status = error";
+                                        setTimeout(() => {
+                                            document.getElementById("ip").value = "";
+                                            document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                        }, 1000);
+                                    } else if (ip === "127.0.0.1") {
+                                        document.getElementById("ip").value = "status = error";
+                                        setTimeout(() => {
+                                            document.getElementById("ip").value = "";
+                                            document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                        }, 1000);
+                                    } else if (ip === "localhost") {
+                                        document.getElementById("ip").value = "status = error";
+                                        setTimeout(() => {
+                                            document.getElementById("ip").value = "";
+                                            document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                        }, 1000);
+                                    } else if (ip === "") {
+                                        document.getElementById("ip").value = "";
+                                        document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                    } else if (ip === " ") {
+                                        document.getElementById("ip").value = "";
+                                        document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                    } else {
+                                        localStorage.setItem("msgserver_ip", ip);
+                                        document.getElementById("ip").value = "status = ok, reboot...";
+                                        setTimeout(() => {
+                                            document.getElementById("ip").value = "";
+                                            document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                            setTimeout(() => {
+                                                sessionStorage.setItem("_reboot", "true");
+                                                window.location.href = "redirect.html";
+                                            }, 1200);
+                                        }, 1000);
+                                    }
+                                }
+                                function resetIP() {
+                                    localStorage.setItem("msgserver_ip", "https://cracky.ddns.net:8080");
+                                    document.getElementById("ip").value = "reset to default ip, reboot...";
+                                    setTimeout(() => {
+                                        document.getElementById("ip").value = "";
+                                        document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                        setTimeout(() => {
+                                            sessionStorage.setItem("_reboot", "true");
+                                            window.location.href = "redirect.html";
+                                        }, 1200);
+                                    }, 1000);
+                                }
+                                function reloadIP() {
+                                    document.getElementById("ip").value = "reload ip...";
+                                    setTimeout(() => {
+                                        document.getElementById("ip").value = "";
+                                        document.getElementById("ip").placeholder = localStorage.getItem("msgserver_ip");
+                                    }, 500);
+                                }
+                            </script>
+                            <hr>
+                            <li class="mdl-menu__item" disabled>
+                                sessionStorage <b>runtime</b>
+                            </li>
+                            <b style="color: black!important;float:left!important; margin-left: 12px;">&nbsp;set&nbsp;</b>
+                            <button onclick="sessionStorage.removeItem('runtime');">null</button>
+                            <button onclick="sessionStorage.setItem('runtime', 'true');">true</button>
+                            <button onclick="sessionStorage.setItem('runtime', 'false');">false</button>
+                            <hr>
+                            <li class="mdl-menu__item" disabled>
+                                <b>token</b> authentification
+                            </li>
+                            <b style="color: black!important;float:left!important; margin-left: 12px;">&nbsp;set&nbsp;</b>
+                            <button onclick="localStorage.removeItem('token');">null</button>
+                            <button onclick="localStorage.setItem('token', 'DEBUG');">debug</button>
+                            <button onclick="localStorage.setItem('token', '!D3VM4');">dev</button>
+                            <hr>
+                            <li class="mdl-menu__item" disabled>
+                                Features&nbsp;&nbsp;<sup>NEW!</sup>
+                            </li>
+                            <li class="mdl-menu__item"><!--safe lock-->
+                                sfL&nbsp;&nbsp;&emsp;
+                                <button onclick="localStorage.setItem('sfL', 'true');">enable</button>
+                                &nbsp;
+                                <button onclick="localStorage.setItem('sfL', 'false');">disable</button>
+                            </li>
+                            
+                            <li class="mdl-menu__item" disabled>
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                    style="background-color: #373737; color: white; width: 180px;"
+                                    onclick="localStorage.setItem('update', 'available');window.location.href='./settings.html?update'">d:ft-update</button>
+                            </li>
+                            <hr>
+                            <button onclick="vibrate('pattern', 'p_oc'); save_hf();" id="hf-button" class="checkbox">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="hf">
+                                <input type="checkbox" id="hf" class="mdl-checkbox__input" checkbox>
+                                <span class="mdl-checkbox__label" style="color: black!important;">
+                                    <i>Haptic Feedback</i>
+                                </span>
+                            </label>
+                            </button>
+                            <hr>
+                            <button onclick="vibrate('pattern', 'p_oc'); save_pm();" id="pm-button" class="checkbox">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="pm">
+                                <input type="checkbox" id="pm" class="mdl-checkbox__input" checkbox>
+                                <span class="mdl-checkbox__label" style="color: black!important;">
+                                    <i>Umlauterkennung</i>
+                                </span>
+                            </label>
+                            </button><br>
+                            <hr>
+                            <li class="mdl-menu__item" disabled>
+                                Logging&nbsp;&nbsp;&nbsp;&nbsp;<button onclick="localStorage.removeItem('logs');getStorage();log(page_8725fcac, 'logs cleared by ' + localStorage.getItem('user'), 'no logs existing');window.location.href = 'settings.html';">d:rem-logs</button>
+                            </li>
+                            <li class="mdl-menu__item">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                    style="background-color: #373737; color: white; width: 180px;"
+                                    onclick="create_bugreport();">d:cr-bugreport</button>
+                            </li>
+                            <br>
+                            <button onclick="save_logSubmit();" class="checkbox">
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="aLsb">
+                                    <input type="checkbox" id="aLsb" class="mdl-checkbox__input" checkbox>
+                                    <span style="color: black!important;" class="mdl-checkbox__label">
+                                        <i>Auto Logsubmit<br><small>Details: <small style="font-family: monospace;">default,set</small></small></i>
+                                    </span>
+                                </label>
+                            </button><br><br>
+                            <hr>
+                            <li class="mdl-menu__item" disabled>
+                                Sections
+                            </li>
+                            <a onclick="section('certInvalid', 'settings');">
+                                certInvalid
+                            </a><br>
+                            <a onclick="section('certHash', 'settings');">
+                                certHash
+                            </a><br>
+                            <a onclick="section('webLogin', 'settings');">
+                                webLogin
+                            </a><br>
+                            <a onclick="section('theming', 'settings');">
+                                theming
+                            </a><br>
+                            <a onclick="section('help', 'settings');">
+                                help
+                            </a>
+                            <hr id="lhr">
+                            <li class="mdl-menu__item" id="dalDB">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                    style="background-color: #373737; color: white; width: 180px;" 
+                                    onclick="disallowDebug();">
+                                    disallow-debug
+                                </button>
+                            </li>
+                            <script>
+                                if (localStorage.getItem("user") === "DEVELOPER") {
+                                    document.getElementById("dalDB").style.display = "none";
+                                    document.getElementById("lhr").style.display = "none";
+                                }
+                            </script>
+                            <hr>
+                            <a onclick="vibrate('pattern', 'p_r'); sessionStorage.setItem('_reboot', 'true'); window.location.href = 'redirect.html';" style="color: rgb(110, 25, 215);">EXEC REBOOT</a>
+                            <hr>
+                            <a onclick="vibrate('pattern', 'p_r'); R();" style="color: red;">⚠️MASTERRESET⚠️</a>
+                        </ul>
+
+                        <script>
+                            //zeige debug info wenn allowDebug = true
+                            if (localStorage.getItem("allowDebug") === "true") {
+                                var debugHTML = `<button style="height: 60px; width: 205px; border-radius: 0px;" id="demo-menu-lower-left" class="mdl-button mdl-js-button mdl-button--icon" disabled>
+                                                    <h4>debug menu</h4>
+                                                </button>`;
+
+                                document.getElementById("debugfield").innerHTML = debugHTML;
+                            }
+                        </script>
+                        <br><br>
+
+                        <!--einstellungen für USER-->
+                        <button onclick="save_autoclear();" id="autoclear-button" class="checkbox">
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="auto-clear">
+                                <input type="checkbox" id="auto-clear" class="mdl-switch__input" checkbox>
+                                <span class="mdl-switch__label" id="autoclearLabel">
+                                    autoclear&NonBreakingSpace;&nbsp;
+                                </span>
+                            </label>
+                        </button>
+                        <br>
+                        <button onclick="save_darkmode();" id="autoclear-button" class="checkbox">
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="darkmode">
+                                <input type="checkbox" id="darkmode" class="mdl-switch__input" checkbox>
+                                <span class="mdl-switch__label" id="darkmodeLabel">
+                                    Darkmode
+                                </span>
+                            </label>
+                        </button>
+                        <br><br>
+                        <!--<a onclick="section('theming', 'settings');">Theme auswählen</a>-->
+                        <br><br>
+                        <button onclick="vibrate('pattern', 'p_oc'); change_wortcode();" id="cwButton"
+                            class="actionctrl mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                            Wort-Code ändern
+                        </button>
+                        <br>
+                        <button onclick="reset();" style="background-color: rgb(205, 50, 84)!important; color: white;" id="resetButton"
+                            class="actionctrl reset mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                            App zurücksetzen
+                        </button>
+                        <br>
+                        <button onclick="save_kompatiblerModus();" class="checkbox" style="margin-top: 5px;">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="kompatiblerModus">
+                                <input type="checkbox" id="kompatiblerModus" class="mdl-checkbox__input">
+                                <span class="mdl-checkbox__label">
+                                    Kompatibler Modus
+                                </span>
+                            </label>
+                        </button>
+                        <br><br>
+                        <a onclick="section('certInfo', 'settings');">Technische Details zum<br>Sicherheitszertifikat</a><br>
+                        <br><br>
+                        <!--wenn debug, zeige log-datei speicher + button für logView-->
+                        <p onclick="section('logViewer', 'settings');setTimeout(() => {loadTableData();}, 100);" id="logdataKB"></p>
+                        <div onclick="mode_dev();">
+                            <br><br><br><br>
+                        </div>
+                    </div>
+
+                    <div id="theming" class="section">
+                        <h4>Header-Farben</h4>
+                        <div class="userSelect">
+                            <button onclick="localStorage.setItem('headerTheme', '#416b3c');document.getElementById('option-2').checked = 'false';document.getElementById('option-1').checked = 'true';" style="background-color: #416b3c; color: white;"
+                                class="theming mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                                <input type="radio" id="option-1" class="mdl-radio__button" name="options" value="1">&nbsp;Farbe 1
+                            </button>
+                            <button onclick="localStorage.setItem('headerTheme', '#13525e');document.getElementById('option-1').checked = 'false';document.getElementById('option-2').checked = 'true';" style="background-color: #13525e; color: white;"
+                                class="theming mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                                <input type="radio" id="option-2" class="mdl-radio__button" name="options" value="2">&nbsp;Farbe 2
+                            </button>
+                            <script>
+                                let current_headerTheme = localStorage.getItem('headerTheme');
+                                if (current_headerTheme) {
+                                    if (current_headerTheme === "#416b3c") {
+                                        document.getElementById('option-1').checked = 'true';
+                                    } else if (current_headerTheme === "#13525e") {
+                                        document.getElementById('option-2').checked = 'true';
+                                    }
+                                }
+                            </script>
+                        </div>
+                        <h4 id="dmTitle">Darkmode-Farben</h4>
+                        <div class="userSelect">
+                            <button onclick="localStorage.setItem('darkmodeBackground', '#7a7d80');document.getElementById('option-4').checked = 'false';document.getElementById('option-5').checked = 'false';document.getElementById('option-6').checked = 'false';document.getElementById('option-7').checked = 'false';document.getElementById('option-8').checked = 'false';document.getElementById('option-3').checked = 'true';"
+                                class="theming mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: #7a7d80; color: white;" id="button-3">
+                                <input type="radio" id="option-3" class="mdl-radio__button" name="options1" value="3">&nbsp;Farbe 1
+                            </button>
+                            <button onclick="localStorage.setItem('darkmodeBackground', '#3c3c3c');document.getElementById('option-3').checked = 'false';document.getElementById('option-5').checked = 'false';document.getElementById('option-6').checked = 'false';document.getElementById('option-7').checked = 'false';document.getElementById('option-8').checked = 'false';document.getElementById('option-4').checked = 'true';"
+                                class="theming mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: #3c3c3c; color: white;" id="button-4">
+                                <input type="radio" id="option-4" class="mdl-radio__button" name="options1" value="4">&nbsp;Farbe 2
+                            </button>
+                            <br>
+                            <button onclick="localStorage.setItem('darkmodeBackground', '#272b34');document.getElementById('option-3').checked = 'false';document.getElementById('option-4').checked = 'false';document.getElementById('option-6').checked = 'false';document.getElementById('option-7').checked = 'false';document.getElementById('option-8').checked = 'false';document.getElementById('option-5').checked = 'true';"
+                                class="theming mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: #272b34; color: white;" id="button-5">
+                                <input type="radio" id="option-5" class="mdl-radio__button" name="options1" value="5">&nbsp;Farbe 3
+                            </button>
+                            <button onclick="localStorage.setItem('darkmodeBackground', '#17181c');document.getElementById('option-3').checked = 'false';document.getElementById('option-4').checked = 'false';document.getElementById('option-5').checked = 'false';document.getElementById('option-7').checked = 'false';document.getElementById('option-8').checked = 'false';document.getElementById('option-6').checked = 'true';"
+                                class="theming mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: #17181c; color: white;" id="button-6">
+                                <input type="radio" id="option-6" class="mdl-radio__button" name="options1" value="6">&nbsp;Farbe 4
+                            </button>
+                            <br>
+                            <button onclick="localStorage.setItem('darkmodeBackground', '#1f1f1f');document.getElementById('option-3').checked = 'false';document.getElementById('option-4').checked = 'false';document.getElementById('option-5').checked = 'false';document.getElementById('option-6').checked = 'false';document.getElementById('option-8').checked = 'false';document.getElementById('option-7').checked = 'true';"
+                                class="theming mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: #1f1f1f; color: white;" id="button-7">
+                                <input type="radio" id="option-7" class="mdl-radio__button" name="options1" value="7">&nbsp;Farbe 5
+                            </button>
+                            <button onclick="localStorage.setItem('darkmodeBackground', '#131313');document.getElementById('option-3').checked = 'false';document.getElementById('option-4').checked = 'false';document.getElementById('option-5').checked = 'false';document.getElementById('option-6').checked = 'false';document.getElementById('option-7').checked = 'false';document.getElementById('option-8').checked = 'true';"
+                                class="theming mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: #131313; color: white;" id="button-8">
+                                <input type="radio" id="option-8" class="mdl-radio__button" name="options1" value="8">&nbsp;Farbe 6
+                            </button>
+                            <script>
+                                if (localStorage.getItem("darkmode") !== "true") {
+                                    document.getElementById("dmTitle").innerHTML = "Darkmode-Farben<br><small>aktiviere Darkmode dafür!</small>";
+                                    document.getElementById("option-3").disabled = "true";
+                                    document.getElementById("button-3").disabled = "true";
+                                    document.getElementById("option-4").disabled = "true";
+                                    document.getElementById("button-4").disabled = "true";
+                                    document.getElementById("option-5").disabled = "true";
+                                    document.getElementById("button-5").disabled = "true";
+                                    document.getElementById("option-6").disabled = "true";
+                                    document.getElementById("button-6").disabled = "true";
+                                    document.getElementById("option-7").disabled = "true";
+                                    document.getElementById("button-7").disabled = "true";
+                                    document.getElementById("option-8").disabled = "true";
+                                    document.getElementById("button-8").disabled = "true";
+                                }
+                                let current_darkmdeBackground = localStorage.getItem('darkmodeBackground');
+                                if (current_darkmdeBackground) {
+                                    if (current_darkmdeBackground === "#7a7d80") {
+                                        document.getElementById('option-3').checked = 'true';
+                                    } else if (current_darkmdeBackground === "#3c3c3c") {
+                                        document.getElementById('option-4').checked = 'true';
+                                    } else if (current_darkmdeBackground === "#272b34") {
+                                        document.getElementById('option-5').checked = 'true';
+                                    } else if (current_darkmdeBackground === "#17181c") {
+                                        document.getElementById('option-6').checked = 'true';
+                                    } else if (current_darkmdeBackground === "#1f1f1f") {
+                                        document.getElementById('option-7').checked = 'true';
+                                    } else if (current_darkmdeBackground === "#131313") {
+                                        document.getElementById('option-8').checked = 'true';
+                                    } 
+                                }
+                            </script>
+                        </div>
+
+                        <button onclick="setTimeout(() => {location.reload();}, 100);" style="margin-top: 20px;"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                            Anwenden & Neu laden
+                        </button>
+                    </div>
+
+                    <!--update sektion-->
+                    <div id="update" class="section">
+                        <h4 class="header updateheader rb" id="updateTitle">Update verfügbar!</h4>
+                        <p id="text">Es ist ein Update für <b>msg</b> auf <b id="ov"></b> verfügbar!</p><hr>
+                        <h5 class="changelog" id="updateinfo">
+                            <b>-- Neuigkeiten --</b>
+                            <p style="margin-top: 5px;" id="changes">
+                                <script id="changelog">
+                                    //muss serverseitig doc.getElmById("changes").innerHTML sein!!
+                                </script>
+                            </p>
+                        </h5>
+                        <br>
+                        <p id="infoText">Bitte lade dir die neue Version von<br>
+                            <uu>&nbsp;cracky.ddns.net/d/msg-encrypt/latest&nbsp;</uu><br>herunter. Du kannst den Link
+                            kopieren und<br>in deinem Browser öffnen.
+                        </p>
+                        <button onclick="localStorage.removeItem('update');window.location.href='./index.html?comeFrom=settings.html';" id="okButton"
+                            class="actionctrl mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                            ok, verstanden
+                        </button>
+                        <br><br>
+                        <script>
+                            if (localStorage.getItem("update") === "available") {
+                                const scriptTag = document.getElementById('changelog');
+                                scriptTag.src = "https://cracky.ddns.net/services/apps/crackyOS/application/com.crackyOS.pyProjects/msg-encrypt/android.app/changes.js?getChanges&sid=6fd8430e-536d-11ef-959e-93000366c8b1";
+                            }
+                        </script>
+                    </div>
+
+                    <!--wortcode ändern-->
+                    <div id="change_wortcode" class="section">
+                        <h4 id="changeWortCodeTitle">Wort-Code ändern</h4>
+                        <br><br>
+                        <div class="wordfield">
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Wolken" onclick="vibrate('pattern', 'p_oc'); set_word('Wolken');">Wolken</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Freund" onclick="vibrate('pattern', 'p_oc'); set_word('Freund');">Freund</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Blumen" onclick="vibrate('pattern', 'p_oc'); set_word('Blumen');">Blumen</button>
+                            <br>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Tanzen" onclick="vibrate('pattern', 'p_oc'); set_word('Tanzen');">Tanzen</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Ente" onclick="vibrate('pattern', 'p_oc'); set_word('Ente');">Ente</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Stifte" onclick="vibrate('pattern', 'p_oc'); set_word('Stifte');">Stifte</button>
+                            <br>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Lachen" onclick="vibrate('pattern', 'p_oc'); set_word('Lachen');">Lachen</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Karton" onclick="vibrate('pattern', 'p_oc'); set_word('Karton');">Karton</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Banane" onclick="vibrate('pattern', 'p_oc'); set_word('Banane');">Banane</button>
+                        </div>
+                        <br><br>
+                        <button onclick="vibrate('pattern', 'p_oc'); save_changed_wortcode();" id="saveButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">speichern</button>
+                    </div>
+
+                    <div id="webLogin" class="section">
+                        <h4>Anmeldung genehmigen</h4>
+                        <p style="max-width: 80%; margin-top: 10px;">Es wird versucht, sich mit deinem Token in msg.web anzumelden. Bitte bestätige dass du der Anmeldung zustimmst.</p>
+                        <p style="font-weight: bold; font-size: 18px;" id="_currToken"></p>
+                        <script src="./src/3rd-party/jquery.slideunlock.js"></script>
+                        <script>
+                            document.getElementById("_currToken").innerHTML = "Dein Token ist <u>" + localStorage.getItem("token") + "</u>"
+                            $(function () {
+                                var slider = new SliderUnlock("#slider", {}, function () {
+                                    accept_web();
+                                });
+                    
+                                slider.init();
+                            })
+                        </script>
+
+                        <div id="slider">
+                            <div id="slider_bg"></div>
+                            <span id="label">>></span>
+                            <span id="labelTip">Wische für Genehmigung</span>
+                        </div>
+                        <script id="acceptWeb"></script>
+                    </div>
+
+                    <div id="logsRAW" class="section" style="text-align: left!important; overflow-x: auto; overflow-x: scroll; width: 1000px!important;">
+                        <button onclick="document.getElementById('logsRAW').classList.remove('active');document.getElementById('logViewer').classList.add('active');document.getElementById('rawLogData').innerText = '';setTimeout(() => {loadTableData()}, 10);" 
+                        style="float: left; margin-left: 10px;">zurück</button><br>
+                        <div class="scroll-container">
+                            <div class="json-content">
+                                <p id="rawLogData" style="font-size: 8px;"></p>
+                                <script>
+                                    function loadRawLogs() {
+                                        let _logs = localStorage.getItem("logs");
+                                        try {
+                                            _logs = JSON.parse(_logs);
+                                        } catch (e) {
+                                            
+                                        }
+                                        let formattedLogs = JSON.stringify(_logs, null, 2);
+                                        document.getElementById('rawLogData').innerText = formattedLogs;
+                                    }
+                                </script>
+                            </div>
+                        </div>                        
+                    </div>
+
+                    <!--logViewer-->
+                    <div id="logViewer" class="section">
+                        <br>
+                        <button onclick="submit_logs('manuell'); getStorage();">submit & clear</button>
+                        <button onclick="report_logs(); getStorage();">dev report</button>
+                        <button onclick="localStorage.removeItem('logs');log('./settings.html:sLogs', 'cleared logs by user');const tableBody = document.getElementById('jsonTable').getElementsByTagName('tbody')[0];tableBody.innerHTML = '';setTimeout(() => {loadTableData()}, 100); getStorage();">clear</button>
+                        <button onclick="const tableBody = document.getElementById('jsonTable').getElementsByTagName('tbody')[0];tableBody.innerHTML = '';setTimeout(() => {loadTableData()}, 100); getStorage();">reload</button>
+                        <button onclick="section('logsRAW', 'logViewer');const tableBody = document.getElementById('jsonTable').getElementsByTagName('tbody')[0];tableBody.innerHTML = '';setTimeout(() => {loadRawLogs()}, 100); getStorage();">raw</button>
+                        <button onclick="getStorage(); back();">zurück</button>
+                        <div class="table-container">
+                            <table id="jsonTable">
+                                <thead>
+                                    <tr>
+                                        <th>timestamp d.m.y h.m.s.ms</th>
+                                        <th>page / activity</th>
+                                        <th>Log Message / Function</th>
+                                        <th>Error Message</th>
+                                        <th>User</th>
+                                        <th>Token</th>
+                                        <th>Version</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <br>
+                        <script>
+                            function loadTableData() {
+                                const logsJson = localStorage.getItem('logs');
+                                const data = JSON.parse(logsJson);
+                                
+                                const tableBody = document.getElementById('jsonTable').getElementsByTagName('tbody')[0];
+                                data.forEach(item => {
+                                    setTimeout(() => {
+                                        const row = document.createElement('tr');
+                            
+                                        const cells = [
+                                            item.timestamp,
+                                            item.page,
+                                            item.logmsg,
+                                            item.errmsg !== null ? item.errmsg : '',
+                                            item.user !== null ? item.user : '',
+                                            item.token !== null ? item.token : '',
+                                            item.version
+                                        ];
+                                        
+                                        cells.forEach((cellData, index) => {
+                                            setTimeout(() => {
+                                                const cell = document.createElement('td');
+                                                
+                                                if (index === 1) { 
+                                                    const link = document.createElement('a');
+                                                    link.href = cellData;
+                                                    link.textContent = cellData;
+                                                    cell.appendChild(link);
+                                                } else {
+                                                    cell.textContent = cellData;
+                                                }
+                                                
+                                                row.appendChild(cell);
+                                            }, 10);
+                                        });
+                            
+                                        tableBody.appendChild(row);
+                                    }, 10);
+                                });
+                            }
+                        </script>                        
+                    </div>
+
+                    <!--hilfe sektion, aktuell nicht aktiv / gebraucht-->
+                    <div id="help" class="section">
+                        <h4>Hilfe / FAQ zu msg</h4>
+                        <img class="msg-icon" loading="lazy" src="./src/img/icon.png">
+                        <br><br>
+                        <div>
+                            <p>hier kann text stehen</p>
+                        </div>
+                        <br><br><br>
+                        <a onclick="section('settings', 'help');">zurück</a>
+                    </div>
+
+                    <div id="certInvalid" class="section">
+                        <h4>Info zu Zertifikat</h4>
+                        <img class="icon" loading="lazy" src="./src/img/expired.png">
+                        <p style="max-width: 90%; width: 85%;">Diese App wird mit einem Sicherheitszertifikat geschützt. Dieses Besitzt ein Ablaufdatum. 
+                            Beim verfallen der Gültigkeit, wird die Hauptfunktion in msg deaktiviert. Dies liegt daran, dass für diese Version ein vordefiniertes
+                            Ablaufdatum angibt, wann diese Version "alt" ist und ausgetauscht bzw. geupdated werden möchte. Aus Sicherheitsgründen kann und darf 
+                            nur solch ein Sicherheitszertifikat ausschließlich vom Entwickler ausgestellt und signiert werden. Bei Manipulationsversuchen wird 
+                            ebenfalls msg in der Funktionalität eingeschränkt. Unterlassene Manipulationsversuche werden ebenfalls an den Entwickler gemeldet.</p>
+                        <br>
+                        <a onclick="section('settings', 'certInvalid');">zurück</a>
+                    </div>
+
+                    <div id="certHash" class="section">
+                        <h4>Info zu Zertifikat</h4>
+                        <img class="icon" loading="lazy" src="./src/img/invalid.png">
+                        <p style="max-width: 90%; width: 85%;">Diese App wird mit einem Sicherheitszertifikat geschützt (<a onclick="section('certInvalid', 'certHash');">siehe hier</a>). 
+                            Gleichzeitig wird von diesem Zertifikat eine Prüfsumme erzeugt. Diese ist Einzigartig, was bedeutet, sobald sich etwas
+                            an diesem Zertifikat ändert (oder dieses sogar manipuliert wird), was nicht vom Entwickler angedacht ist, erscheint eine 
+                            Fehlermeldung. Dies hat den Hintergrund dass ausschließlich Entwickler von msg ein gültiges Update erstellen. In solch 
+                            Fällen wird die Hauptfunktion von msg deaktiviert und der Manipulationsversuch an den Entwickler gemeldet.</p>
+                        <br>
+                        <a onclick="section('settings', 'certHash');">zurück</a>
+                    </div>
+
+                    <div id="certInfo" class="section">
+                        <h4>Details zum Zertifikat</h4>
+                        <img class="icon" loading="lazy" src="./src/img/certificate.png">
+                        <p id="certificateInfo"></p>
+                        <br>
+                        <a onclick="section('settings', 'certInfo');">zurück</a>
+                        <script>
+                            var certificate = forge.pki.certificateFromPem(localStorage.getItem("certificate.pem"));
+                            const certificateInfo = document.getElementById('certificateInfo');
+                            var commonName = certificate.subject.getField('CN').value;
+                            var countryName = certificate.subject.getField('C').value;
+                            var organizationName = certificate.subject.getField('O').value;
+                            var expirationDate = new Date(certificate.validity.notAfter);
+                            var publicKeyAlgorithm = certificate.publicKey.algorithm;
+                            var algorithmName = publicKeyAlgorithm + " (" + certificate.publicKey.n?.bitLength() + "-bit)";
+
+                            certificateInfo.innerHTML = `<br>Ausgestellt für: <u>${commonName}</u><br>Ausgestellt von: <u>${organizationName}</u><br>Gültigkeitsbereich: <u>${countryName}</u><br>Ablaufdatum: <u>${expirationDate}</u><br><!--Algorithmus: ${algorithmName}--><br>SHA256-Checksumme:<br><c style="font-size: 9px; max-width: 90%; font-weight: bold;">${localStorage.getItem("certificate.sha256")}</c>`;
+                        </script>
+                    </div>
+
+                    <div id="versionBuild" class="section">
+                        <h4>Version Build</h4><br>
+                        <h5 id="versionBuildInfo"><script>document.write(localStorage.getItem("version"));</script></h5>
+                        <br><br><button onclick="section('settings', 'versionBuild');">zurück</button>
+                    </div>
+
+                    <div id="easterEgg1" class="section" onclick="farbwechsel();" style="height: 100%!important;">
+                        <br><br><br>
+                        <code style="text-align: left; float: left; font-family: monospace; color: limegreen">
+                            function farbwechsel() {<br>
+                            &emsp;&emsp;let farbe = getRandomColor();<br>
+                            &emsp;&emsp;document.getElementById(this)
+                            &emsp;&emsp;&emsp;.style.backgroundColor = farbe;<br>
+                            }<br>
+
+                            function getRandomColor() {<br>
+                            &emsp;&emsp;let r = Math.floor(Math.random() * 256);<br>
+                            &emsp;&emsp;let g = Math.floor(Math.random() * 256);<br>
+                            &emsp;&emsp;let b = Math.floor(Math.random() * 256);<br>
+<br>
+                            &emsp;&emsp;return `rgb(${r}, ${g}, ${b})`;<br>
+                            }<br>
+                        </code>
+                        <script>
+                            function farbwechsel() {
+                                let farbe = getRandomColor();
+                                document.getElementById('easterEgg1').style.backgroundColor = farbe;
+                            }
+
+                            function getRandomColor() {
+                                let r = Math.floor(Math.random() * 256);
+                                let g = Math.floor(Math.random() * 256);
+                                let b = Math.floor(Math.random() * 256);
+
+                                return `rgb(${r}, ${g}, ${b})`;
+                            }
+                        </script>
+                        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                        <button onclick="document.getElementById('masterTitle').innerText = 'Einstellungen'; section('settings', 'easterEgg1');">zurück</button><br><br>
+                    </div>
+                </center>
+
+                <script>
+                    //theming style
+                    let headerTheme = localStorage.getItem("headerTheme");
+                    if (headerTheme) {
+                        const headerElements = document.querySelectorAll(
+                        'div.mdl-layout__header-row, div.mdl-layout__drawer-button, header.mdl-layout__header, header.is-casting-shadow'
+                        );
+                        headerElements.forEach(header => {
+                            header.style.backgroundColor = headerTheme;
+                        });
+                    }
+                    //darkmode styling
+                    if (localStorage.getItem("darkmode") === "true") {
+                        document.body.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                        document.body.style.color = "white";
+                    
+                        menu = document.querySelector("div.mdl-layout__drawer");
+                        menu.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                        menu.style.color = "white";
+                    
+                        inputField = document.querySelector("textarea#inputfield.inputfield");
+                        if (inputField) {
+                            inputField.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                            inputField.style.color = "white";
+                            inputField.style.borderColor = "gray";
+                        }
+                    
+                        disabled_inputField = document.querySelector("textarea.disabled");
+                        if (disabled_inputField) {
+                            disabled_inputField.style.backgroundColor = "#2e2e2e";
+                        }
+                    
+                        buttons = document.querySelectorAll("button.mdl-button");
+                        buttons.forEach(function (button) {
+                            button.style.color = "white";
+                        });
+                    
+                        locked_buttons = document.querySelectorAll("button.wortcode");
+                        locked_buttons.forEach(function (locked_button) {
+                            locked_button.style.backgroundColor = "#424242";
+                            locked_button.style.color = "white";
+                            locked_button.style.borderColor = "white";
+                        });
+                    
+                        checkbox = document.querySelectorAll("button.checkbox");
+                        checkbox.forEach(function (checkbox) {
+                            checkbox.style.color = "white";
+                        });
+                    
+                        header = document.querySelectorAll("h3.header");
+                        header.forEach(function (header) {
+                            header.style.backgroundColor = "rgb(65, 110, 124)";
+                        });
+                        header = document.querySelectorAll("h4.header");
+                        header.forEach(function (header) {
+                            header.style.backgroundColor = "rgb(65, 110, 124)";
+                        });
+
+                    } else {
+                        disabled_inputField = document.querySelector("textarea.disabled[disabled]");
+                        if (disabled_inputField) {
+                            disabled_inputField.style.backgroundColor = "#7a7a7a7a";
+                        }
+                    
+                        inputField = document.querySelector("textarea.inputfield");
+                        if (inputField) {
+                            inputField.style.backgroundColor = "rgb(230, 230, 230)";
+                        }
+                    
+                        header = document.querySelectorAll("h3.header");
+                        header.forEach(function (header) {
+                            header.style.backgroundColor = "#e0e0e0";
+                        });
+                        header = document.querySelectorAll("h4.header");
+                        header.forEach(function (header) {
+                            header.style.backgroundColor = "#e0e0e0";
+                        });
+                    }
+                </script>
+
+
+
+                <script>
+                    page_8725fcac = "./settings.html";
+                    let currentSection = 1;
+                    //wenn kein token leite auf firstRunWizard.html
+                    if (localStorage.getItem("token") === null) {
+                        localStorage.clear();
+                        window.location.href = "./firstRunWizard.html?comeFrom=settings.html";
+                    } if (localStorage.getItem("status") === "reset") {
+                        localStorage.clear();
+                        window.location.href = "./firstRunWizard.html?comeFrom=settings.html";
+                    }
+
+                    function getQueryParam(param) {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        return urlParams.get(param);
+                    }
+                    const comeFrom = getQueryParam('comeFrom');
+                    if (comeFrom) {
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_8725fcac, `comeFrom=${comeFrom}`);
+                        }
+                    } else {
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_8725fcac, "comeFrom=UNSET");
+                        }
+                    }
+
+                    window.onload = function () {
+                        //schaue ob ?update im url parameter => leite auf update section
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if (urlParams.has('update')) {
+                            if (localStorage.getItem("EHL") !== "false") {
+                                log(page_8725fcac, "show update available");
+                            }
+                            document.getElementById("settings").classList.remove('active');
+                            document.getElementById("update").classList.add('active');
+                            document.getElementById('ov').innerHTML = localStorage.getItem('ov');
+                        } else if (urlParams.has('certInvalid')) {
+                            section('certInvalid', 'settings');
+                        } else if (urlParams.has('certHash')) {
+                            section('certHash', 'settings');
+                        } else if (urlParams.has('webLogin')) {
+                            section('webLogin', 'settings');
+                            document.getElementById("masterTitle").innerText = "Web Login";
+                        } else if (urlParams.has('help')) {
+                            section('help', 'settings');
+                        }
+                    };
+
+                    //settings:update
+                    if (localStorage.getItem("update") === "available") {
+                        //update titel in settings => masterTitle
+                        document.getElementById("masterTitle").innerText = "Update";
+                    }
+
+                    if (localStorage.getItem("allowDebug") === "true") {
+                        document.getElementById("demo-menu-lower-left").disabled = false;
+                        getStorage();
+                    }
+
+                    function save_autoclear() {
+                        vibrate('time', 45);
+                        document.getElementById("p1").style.visibility = 'visible';
+                        setProgress(100);
+                        var checkboxACL = document.getElementById("auto-clear");
+                        localStorage.setItem("autoclear", checkboxACL.checked);
+                        log(page_8725fcac, "save_autoclear[" + localStorage.getItem("autoclear") + "]");
+                        getStorage();
+                        setTimeout(() => {
+                            setProgress(0);
+                            document.getElementById("p1").style.visibility = 'hidden';
+                        }, 180);
+                    }
+                    let checkedACL = JSON.parse(localStorage.getItem("autoclear"));
+                    document.getElementById("auto-clear").checked = checkedACL;
+
+                    function save_darkmode() {
+                        vibrate('time', 45);
+                        document.getElementById("p1").style.visibility = 'visible';
+                        setProgress(100);
+                        var darkmode = document.getElementById("darkmode");
+                        localStorage.setItem("darkmode", darkmode.checked);
+                        log(page_8725fcac, "save_darkmode[" + localStorage.getItem("darkmode") + "]");
+                        getStorage();
+                        setTimeout(() => {
+                            setProgress(0);
+                            document.getElementById("p1").style.visibility = 'hidden';
+                            window.location.href = "settings.html";
+                        }, 180);
+                    }
+                    let darkmode = JSON.parse(localStorage.getItem("darkmode"));
+                    document.getElementById("darkmode").checked = darkmode;
+
+                    function save_kompatiblerModus() {
+                        vibrate('time', 30);
+                        document.getElementById("p1").style.visibility = 'visible';
+                        setProgress(100);
+                        var kompatiblerModus = document.getElementById("kompatiblerModus");
+                        localStorage.setItem("kompatiblerModus", kompatiblerModus.checked);
+                        log(page_8725fcac, "save_kompatiblerModus[" + localStorage.getItem("kompatiblerModus") + "]");
+                        if (localStorage.getItem("kompatiblerModus") === "true") {
+                            localStorage.setItem("msgserver_ip", "https://cracky.ddns.net/redir");
+                        } else {
+                            localStorage.setItem("msgserver_ip", "https://cracky.ddns.net:8080");
+                        }
+                        getStorage();
+                        setTimeout(() => {
+                            setProgress(0);
+                            document.getElementById("p1").style.visibility = 'hidden';
+                        }, 180);
+                    }
+                    let kompatiblerModus = JSON.parse(localStorage.getItem("kompatiblerModus"));
+                    document.getElementById("kompatiblerModus").checked = kompatiblerModus;
+
+                    //haptic feedback
+                    function save_hf() {
+                        var hf = document.getElementById("hf");
+                        localStorage.setItem("hf", hf.checked);
+                        log(page_8725fcac, "save_haptic-feedback[" + localStorage.getItem("hf") + "]");
+                        getStorage();
+                    }
+
+                    //pattern matching
+                    function save_pm() {
+                        var pm = document.getElementById("pm");
+                        localStorage.setItem("pm", pm.checked);
+                        log(page_8725fcac, "save_pattern-matching[" + localStorage.getItem("pm") + "]");
+                        getStorage();
+                        setTimeout(() => {
+                            sessionStorage.setItem("_reboot", "true");
+                            window.location.href = "redirect.html";
+                        }, 1200);
+                    }
+
+                    if (localStorage.getItem("user") === "DEVELOPER") {
+                        //load haptic feedback
+                        let hfst = localStorage.getItem("hf");
+                        document.getElementById("hf").checked = hfst;
+
+                        //load pattern matching
+                        let pm = localStorage.getItem("pm");
+                        document.getElementById("pm").checked = pm;
+                    }
+
+                    function save_logSubmit() {
+                        var aLsb = document.getElementById("aLsb");
+                        localStorage.setItem("autoLogSubmit", aLsb.checked);
+                        log(page_8725fcac, "save_auto-logsubmit[" + localStorage.getItem("autoLogSubmit") + "]");
+                        getStorage();
+                        window.location.href = "#top";
+                    }
+                    if (localStorage.getItem("allowDebug") === "true") {
+                        let hf_state = JSON.parse(localStorage.getItem("hf"));
+                        document.getElementById("hf").checked = hf_state;
+                        let pm_state = JSON.parse(localStorage.getItem("pm"));
+                        document.getElementById("pm").checked = pm_state;
+                        let aLsb_stat = localStorage.getItem("autoLogSubmit");
+                        document.getElementById("aLsb").checked = aLsb_stat;
+                    }
+
+                    function getStorage() {
+                        let logs = localStorage.getItem("logs") || "";
+                        let sizeInBytes1 = new TextEncoder().encode(logs).length;
+                        let sizeInKilobytes1 = sizeInBytes1 / 1024;
+                        if (localStorage.getItem("allowDebug") === "true") {
+                            document.getElementById('logdataKB').textContent = 'Logs: ' + sizeInKilobytes1.toFixed(2) + ' KB';
+                        }
+                    }
+
+                    let logs = localStorage.getItem("logs") || "";
+                    let sizeInBytes1 = new TextEncoder().encode(logs).length;
+                    let sizeInKilobytes1 = sizeInBytes1 / 1024;
+                    if (sizeInBytes1 >= 102400) {
+                        if (localStorage.getItem("autoLogSubmit") === "true") {
+                            setTimeout(() => {
+                                log(page_8725fcac, "log-KB >= 102400 Byte, submit to Server");
+                                submit_logs('auto');
+                            }, 800);
+                        } else {
+                            log(page_8725fcac, "log-KB >= 102400 Byte, not submitted to Server because autoLogSubmit[" + localStorage.getItem("autoLogSubmit") + "]");
+                        }
+                    }
+
+                    function mode_dev() {
+                        if (localStorage.getItem("allowDebug") !== "true") {
+                            localStorage.setItem("allowDebug", "true");
+                            localStorage.setItem("devStatus", "true");
+                            cuser = localStorage.getItem("user");
+                            if (cuser !== "DEVELOPER") {
+                                localStorage.setItem("oldUser", cuser)
+                                localStorage.setItem('user', 'DEBUG');
+                            }
+                            //location.reload();
+                            window.location.href = "settings.html";
+                        }
+                    }
+
+                    function change_wortcode() {
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_8725fcac, "change_wortcode");
+                        }
+                        localStorage.setItem("status", "cwc");
+                        document.getElementById("settings").classList.remove('active');
+                        document.getElementById("change_wortcode").classList.add('active');
+                    }
+
+                    function accept_web() {
+                        sessionStorage.removeItem("msgweb");
+                        let acwsc = document.getElementById("acceptWeb");
+                        let _msgsrv = localStorage.getItem("msgserver_ip");
+                        let _token = localStorage.getItem("token");
+                        let _acUrl = `${_msgsrv}/msg-server/web/accept/${_token}`;
+                        acwsc.src = _acUrl;
+                        setTimeout(() => {
+                            window.location.href = "index.html?comeFrom=settings.html";
+                        }, 600);
+                    }
+
+                    function save_changed_wortcode() {
+                        setProgress(70);
+                        page_8725fcac = "./changeWortCode.html";
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_8725fcac, "save new wortcode");
+                            getStorage();
+                        }
+                        localStorage.setItem("status", "active");
+                        setProgress(100);
+                        setTimeout(() => {
+                            document.getElementById("settings").classList.add('active');
+                            document.getElementById("change_wortcode").classList.remove('active');
+                            unsetAll();
+                            setProgress(0);
+                            document.getElementById("p1").style.visibility = 'hidden';
+                        }, 180);
+                    }
+
+                    function saveDarkmodeBackground() {
+                        var select = document.getElementById("darkmodeBackground");
+                        var color = select.options[select.selectedIndex].value;
+                        localStorage.setItem("darkmodeBackground", color);
+                        if (localStorage.getItem("darkmode") === "true") {
+                            setTimeout(() => {
+                                //location.reload();
+                                window.location.href = "settings.html";
+                            }, 100);
+                        }
+                    }
+
+                    var darkmodeBackground = localStorage.getItem("darkmodeBackground");
+                    if (localStorage.getItem("user") === "DEVELOPER") {
+                        if (darkmodeBackground) {
+                            var select = document.getElementById("darkmodeBackground");
+                            for (var i = 0; i < select.options.length; i++) {
+                                if (select.options[i].value === darkmodeBackground) {
+                                    select.selectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    function create_bugreport() {
+                        page_5e4c6350 = "./bugreport.js";
+                        darkmode = localStorage.getItem("darkmode");
+                        autoclear = localStorage.getItem("autoclear");
+                        kmpMod = localStorage.getItem("kompatiblerModus");
+                        pm = localStorage.getItem("pm");
+                        runtime = sessionStorage.getItem("runtime");
+                        status = localStorage.getItem("status");
+                        timestamp = localStorage.getItem("timestamp");
+                        WortCode = localStorage.getItem("WortCode");
+                        token = localStorage.getItem("token");
+                        autoLogSubmit = localStorage.getItem("autoLogSubmit");
+                        //certPem = localStorage.getItem("certificate.pem");
+                        certSHA = localStorage.getItem("certificate.sha256");
+                        debug_information = `#---bugreport---[darkmode(${darkmode})];[autoclear(${autoclear})];[kompatiblerModus(${kmpMod})];[pm(${pm})];[runtime(${runtime})];[status(${status})];[timestamp(${timestamp})];[WortCode(${WortCode})];[token(${token})];[certificate.sha256(${certSHA})];---end---#`
+                        log(page_5e4c6350, debug_information);
+
+                        setTimeout(() => {
+                            //location.reload();
+                            window.location.href = "settings.html";
+                        }, 300);
+                    }
+
+                    //#363 check-cert-activation-on-comeback
+                    document.addEventListener("visibilitychange", function() {
+                        if (document.hidden) {
+                            if (localStorage.getItem("EHL") !== "false") {
+                                log(page_8725fcac, "STANDBY");
+                            }
+
+                        } else if (!document.hidden) {
+                            if (localStorage.getItem("EHL") !== "false") {
+                                log(page_8725fcac, "ACTIVE");
+                            }
+                            window.location.href = '#top';
+                            document.getElementById('p1').classList.add('mdl-progress__indeterminate');
+                            document.getElementById('p1').style.visibility = 'visible';
+                            
+                            setTimeout(() => {
+                                
+                                //check certificate
+                                if (sessionStorage.getItem("certificate") === "valid") {
+                                    document.getElementById('p1').style.visibility = 'hidden';
+                                    document.getElementById('p1').classList.remove('mdl-progress__indeterminate');
+                                    if (localStorage.getItem("EHL") !== "false") {
+                                        log(page_8725fcac, "certificate: valid");
+                                    }
+                                } else {
+                                    sessionStorage.removeItem("runtime");
+                                    log(page_8725fcac, "certificate: invalid", "can`t activate runtime");
+                                    //location.reload();
+                                    window.location.href = "settings.html";
+                                }
+                            }, 450);
+                        }
+                    });
+                    
+                    function section(toShow, toHide) {
+                        document.getElementById(toHide).classList.remove('active');
+                        document.getElementById(toShow).classList.add('active');
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_8725fcac, `section(${toShow}, ${toHide})`);
+                        }
+                        if (toShow === "theming") {
+                            /*document.getElementById('home').style.display = 'none';
+                            document.getElementById('lock').style.display = 'none';
+                            document.getElementById('homeButton').style.display = 'none';
+                            document.getElementById('lockButton').style.display = 'none';*/
+                            document.getElementById('masterTitle').innerText = 'Farbdesign';
+                        }
+                    }
+
+                    function disallowDebug() {
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_8725fcac, 'disabled debug mode via debug:settings');
+                        }
+                        localStorage.removeItem('allowDebug');
+                        localStorage.setItem('autoLogSubmit', 'true');
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_8725fcac, 'set autoLogSubmit[true]');
+                        }
+                        if (localStorage.getItem("user") !== "DEVELOPER") {
+                            localStorage.setItem('user', 'USER');
+                        }
+                        //location.reload();
+                        //window.location.href = "settings.html";
+                        sessionStorage.setItem("_reboot", "true");
+                        window.location.href = "redirect.html";
+                    }
+
+                    function back() {
+                        const tableBody = document.getElementById('jsonTable').getElementsByTagName('tbody')[0];
+                        tableBody.innerHTML = '';
+                        setTimeout(() => {
+                            document.getElementById("logViewer").classList.remove('active');
+                            document.getElementById("settings").classList.add('active');
+                        }, 100);
+                    }
+
+                    function setProgress(progress) {
+                        document.getElementById("p1").style.visibility = 'visible';
+                        var progressBar = document.querySelector('#p1');
+                        if (progressBar && progressBar.MaterialProgress) {
+                            progressBar.MaterialProgress.setProgress(progress);
+                        }
+                    }
+
+                    let eEval = 0;
+                    function easterEgg() {
+                        eEval += 1;
+                        if (eEval === 1) {
+                            section("versionBuild", "settings");
+                        } else if (eEval === 8) {
+                            document.getElementById("settings").classList.remove('active');
+                            section("easterEgg1", "versionBuild");
+                            document.getElementById("masterTitle").innerText = "Easter Egg 1.0";
+                        }
+                    }
+                    
+
+                    function reset() {
+                        p_r();
+                        let logs;
+                        let current_token;
+                        document.getElementById("p1").style.visibility = 'hidden';
+                        logs = localStorage.getItem("logs");
+                        current_token = localStorage.getItem("token");
+                        setProgress(10);
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        setProgress(50);
+                        sessionStorage.setItem("logs", logs);
+                        localStorage.setItem("token", current_token);
+                        sessionStorage.setItem("submitLogsAfterReset", "true");
+                        setTimeout(() => {
+                            setProgress(70);
+                            setTimeout(() => {
+                                setProgress(90);
+                                setTimeout(() => {
+                                    setProgress(100);
+                                    localStorage.setItem("status", "reset");
+                                    window.location.href = "./firstRunWizard.html?submitLogs";
+                                }, 300);
+                            }, 200)
+                        }, 200)
+                    }
+                </script>
+                
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

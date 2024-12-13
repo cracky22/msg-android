@@ -1,0 +1,11 @@
+{
+  "name": "msg-encrypt",
+  "short_name": "msg",
+  "description": "Eine App zum Verschlüsseln von Textnachrichten",
+  "start_url": "./redirect.html",
+  "background_color": "#13525e",
+  "theme_color": "#13525e",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "lang": "de"
+}

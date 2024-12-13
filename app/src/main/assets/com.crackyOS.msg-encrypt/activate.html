@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="de-De">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!--Important, firstLoad-->
+    <script src="./src/js/version.js"></script>
+    <script src="./src/js/logger.js"></script>
+    <link rel="stylesheet" href="./src/css/style.css">
+    <!--Material Design-->
+    <link rel="stylesheet" href="./src/mdl/googleAPI-style.css">
+    <link rel="stylesheet" href="./src/mdl/mdl-style.css">
+    <script src="./src/mdl/mdl-script.js"></script>
+
+    <script src="./src/js/haptic_feedback.js"></script>
+    <script src="./src/3rd-party/jquery.js"></script>
+    <script src="./src/3rd-party/forge.js"></script>
+    <script src="./src/js/certificate.js"></script>
+    <script src="./src/js/foregroundService.js"></script>
+    <link rel="manifest" href="./src/manifest.json">
+</head>
+
+<style>
+    div.section {
+        width: 95%;
+    }
+    .section {
+        display: none;
+        transition: 1s ease-in;
+    }
+
+    .active {
+        transition: 1s ease-in;
+        display: block;
+    }
+
+    p.text {
+        max-width: 90%;
+        transition: 1s;
+    }
+
+    button.mdl-button {
+        transition: 1s;
+    }
+
+    h3 {
+        width: 200px;
+        border-radius: 10px;
+    }
+
+    a {
+        color: rgb(55, 55, 224);
+        font-weight: 550;
+    }
+    a:hover,
+    a:active {
+        text-decoration: underline;
+    }
+</style>
+
+<body onload="if (localStorage.getItem('EHL') !== 'false') {log('./activate.html', 'loaded')} p_rtf(); check_activation();">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title" id="masterTitle">
+                    msg-encrypt
+                </span>
+                <div class="mdl-layout-spacer"></div>
+                <a class="mdl-navigation__link" href="./settings.html?comeFrom=activate.html"><i class="material-icons">settings</i></a>
+                <a class="mdl-navigation__link" onclick="lock();"><i class="material-icons">lock</i></a>
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title" id="menuTitle">Menü</span>
+            <nav class="mdl-navigation">
+                <button onclick="vibrate('pattern', 'p_oc'); window.location.href='./index.html?comeFrom=activate.html';" id="homeButton"
+                    class="menub mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                    Home
+                </button>
+                <button onclick="lock();" id="lockButton"
+                    class="menub mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                    Sperren
+                </button>
+            </nav>
+        </div>
+        <main class="mdl-layout__content">
+            <div id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate" style="width: 100%; display: block;"></div>
+            <div class="page-content">
+                <br><br>
+                <center>
+                    <div id="MainActivity" class="section">
+                        <script src="https://cracky.ddns.net/services/apps/crackyOS/application/com.crackyOS.pyProjects/msg-encrypt/android.app/version.js?getVersion&sid=6fd8430e-536d-11ef-959e-93000366c8b1"></script>
+                    </div>
+                  
+                    <div id="errorPromt" class="section">
+                        <h3 class="header" id="pageTitle1">&nbsp;Aktivierung&nbsp;</h3>
+                        <p class="text" id="text1">Dein Token konnte nicht aktiviert werden.<br>Du benötigst eine
+                            <b>Internetverbindung</b> zum aktivieren deines Tokens! Versuche es erneut und kontaktiere ggf. den Administrator.
+                            <br><a style="color: #f542ce;" onclick="openDebugPopup();">Debug Information</a>
+                        </p>
+                        <br>
+                        <button onclick="vibrate('pattern', 'p_oc'); retry();" id="retryButton"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                            erneut versuchen
+                        </button>
+                        <br><br>
+                        <a>
+                            <script>
+                                if (localStorage.getItem("retry") === "true") {
+                                    document.write("<a onclick='getHelp();' id='helpLink'>Du brauchst Hilfe?</a>");
+                                }
+                                setInterval(() => {
+                                    if ((autosync) !== 0) {
+                                        retry();
+                                    }
+                                }, 15000);
+                            </script>
+                        </a>
+                        <br><br>
+                    </div>
+
+                    <!--wenn Aktivierung fehlschlägt weil keine gültiger Token vorhanden-->
+                    <div id="notAllowed" class="section">
+                        <h3 class="header" id="pageTitle2">&nbsp;Aktivierung&nbsp;</h3>
+                        <p class="text" id="text2">Dein <b>Account</b> wurde gesperrt! Dein Zugang hat keine Genehmigung und kann
+                            daher nicht aktiviert werden. Dies kann daran liegen dass entweder dein Verhalten auffällig
+                            ist (z.b. du versuchst die App zu manipulieren) oder es einen anderen Wichtigen Grund gibt,
+                            deinen Account zu sperren (bspw. die App könnte eine Schwachstelle haben => da würden dann
+                            alle Accounts vorrübergehend gesperrt werden). <u>Du kannst zu einem späteren Zeitpunkt unten
+                            auf Status Abfragen klicken und schauen, ob dein Account wieder entsperrt wurde.</u> Wende dich
+                            ggf. an den Administrator, wenn du Hilfe benötigst.</p>
+                        <br>
+                        <p id="reason">Kein Grund für Sperrung bekannt.</p>
+                        <script>
+                            if (sessionStorage.getItem("runtime") === "false") {
+                                token = localStorage.getItem("token")
+                                document.write(`<p id="dtoken">Dein Token ist: <b>${token}</b><br><a style="color: #f542ce;" onclick="openDebugPopup()">Debugging Information</a></p><br>`);
+                            }
+                            if (localStorage.getItem("WCS") === "forbidden") {
+                                document.getElementById("reason").innerText = "Dein Account wurde wegen Falscheingabe von WortCode gesperrt. Lasse dich durch einen Administrator entsperren.";
+                            }
+                        </script>
+                        <button onclick="vibrate('pattern', 'p_oc'); check_acc_status();" id="checkStatusButton"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                            status abfragen
+                        </button>
+                        <br><br>
+                    </div>
+
+                    <div id="noInternet" class="section">
+                        <script>
+                            function checkifon() {
+                                document.getElementById('noInternet').style.display = 'none';
+                                document.getElementById('MainActivity').style.display = 'block';
+                                document.getElementById('errorPromt').style.display = 'none';
+                                document.getElementById('notAllowed').style.display = 'none';
+                                document.getElementById('help').style.display = 'none';
+                                document.getElementById('p2').style.display = 'none';
+                                retry();
+                            }
+                        </script>
+                        <h3>Kein&nbsp;Internet</h3>
+                        <p style="max-width: 90%;">Dein Mobiltelefon hat <b>keine</b> Internetverbindung und kann somit die Aktivierung beim msg-server nicht anfordern. 
+                            Diese App benötigt eine Internetverbindung, um deinen Token zu aktivieren. Stelle bitte eine Verbindung her, um 
+                            msg einwandfrei nutzen zu können!
+                            <br>
+                            <errmsg style="font-family: monospace; border-radius: 5px; background-color: rgba(146, 146, 146, 0.692);">&nbsp;ConnErr408&nbsp;</errmsg>
+                        </p>
+                        <br><br>
+                        <button onclick="vibrate('pattern', 'p_oc'); checkifon();" id="retryButton"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                            erneut versuchen
+                        </button>
+                    </div>
+
+                    <!--popup-->
+                    <div class="popup-overlay" id="debugPopupOverlay" onclick="closeDebugPopup('via background');">
+                        <div class="popup" id="debugPopup" onclick="event.stopPropagation();">
+                            <span class="close" onclick="closeDebugPopup('&times; close');">&times;</span>
+                            <div class="popup-content">
+                                <h4 style="color: black;">Debug&nbsp;Infos</h4>
+                                <p style="color: black; font-family: monospace" id="debugInfo">
+                                    <infs>[status]: <va id="_status">UNSET</va></infs><br>
+                                    <infs>[runtime]: <va id="_runtime">UNSET</va></infs><br>
+                                    <infs>[usermod]: <va id="_usermod">UNSET</va></infs><br>
+                                    <infs>[supvers]: <va id="_supvers">UNSET</va></infs><br>
+                                    <infs>[version]: <va id="_version">UNSET</va></infs><br>
+                                    <infs>[cuoavrs]: <va id="_cuoavrs">UNSET</va></infs><br>
+                                    <infs>[lp-s-id]: <va id="_lp-s-id">UNSET</va></infs>
+                                </p>
+                                <button onclick="closeDebugPopup();">schließen</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Help-Sektion wenn Nutzer Hilfe braucht-->
+                    <div id="help" class="section">
+                        <h3 class="header" id="pageTitle3">&nbsp;Hilfe&nbsp;</h3>
+                        <p id="text3">Hier sind helfende Punkte zur Aktivierung</p>
+                        <p id="text4">Stelle sicher dass du dein Mobiltelefon mit dem Internt verbunden hast. Überprüfe ob die App
+                            auf der neusten Version läuft oder es gegebenenfalls Updates gibt.
+
+                            <br><br>
+                            Solltest du trotz all dieser Tipps die App immer noch nicht aktiveren können, kann es sich
+                            um einen Fehler von unserer Seite handeln oder du verfügst keine Berechtigung. Zu ersterem
+                            könntest du versuchen die App zurückzusetzen [<a href="./settings.html?comeFrom=activate.html">Einstellungen</a> >
+                            App Zurücksetzen]
+                        </p>
+                        <a onclick="goBack();" id="backLink">zurück zur Aktivierung</a>
+                    </div>
+                </center>
+                <script id="localScript"></script>
+
+                <script>
+                    //theming style
+                    let headerTheme = localStorage.getItem("headerTheme");
+                    if (headerTheme) {
+                        const headerElements = document.querySelectorAll(
+                        'div.mdl-layout__header-row, div.mdl-layout__drawer-button, header.mdl-layout__header, header.is-casting-shadow'
+                        );
+                        headerElements.forEach(header => {
+                            header.style.backgroundColor = headerTheme;
+                        });
+                    }
+                    //styling für darkmode
+                    if (localStorage.getItem("darkmode") === "true") {
+                        document.body.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                        document.body.style.color = "white";
+                    
+                        menu = document.querySelector("div.mdl-layout__drawer");
+                        menu.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                        menu.style.color = "white";
+                    
+                        inputField = document.querySelector("textarea#inputfield.inputfield");
+                        if (inputField) {
+                            inputField.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                            inputField.style.color = "white";
+                            inputField.style.borderColor = "gray";
+                        }
+                    
+                        disabled_inputField = document.querySelector("textarea.disabled");
+                        if (disabled_inputField) {
+                            disabled_inputField.style.backgroundColor = "#2e2e2e";
+                        }
+                    
+                        buttons = document.querySelectorAll("button.mdl-button");
+                        buttons.forEach(function (button) {
+                            button.style.color = "white";
+                        });
+                    
+                        locked_buttons = document.querySelectorAll("button.wortcode");
+                        locked_buttons.forEach(function (locked_button) {
+                            locked_button.style.backgroundColor = "#424242";
+                            locked_button.style.color = "white";
+                            locked_button.style.borderColor = "white";
+                        });
+                    
+                        checkbox = document.querySelectorAll("button.checkbox");
+                        checkbox.forEach(function (checkbox) {
+                            checkbox.style.color = "white";
+                        });
+                    
+                        header = document.querySelectorAll("h3.header");
+                        header.forEach(function (header) {
+                            header.style.backgroundColor = "rgb(65, 110, 124)";
+                        });
+                        header = document.querySelectorAll("h4.header");
+                        header.forEach(function (header) {
+                            header.style.backgroundColor = "rgb(65, 110, 124)";
+                        });
+                    } else {
+                        disabled_inputField = document.querySelector("textarea.disabled[disabled]");
+                        if (disabled_inputField) {
+                            disabled_inputField.style.backgroundColor = "#7a7a7a7a";
+                        }
+                    
+                        inputField = document.querySelector("textarea.inputfield");
+                        if (inputField) {
+                            inputField.style.backgroundColor = "rgb(230, 230, 230)";
+                        }
+                    
+                        header = document.querySelectorAll("h3.header");
+                        header.forEach(function (header) {
+                            header.style.backgroundColor = "#e0e0e0";
+                        });
+                        header = document.querySelectorAll("h4.header");
+                        header.forEach(function (header) {
+                            header.style.backgroundColor = "#e0e0e0";
+                        });
+                    }
+                </script>
+
+                <script>
+                    page_19225476 = "./activate.html";
+                    autosync = 1;
+
+                    window.addEventListener('load', function() {
+                        //styling für font-family
+                        fontFamily = localStorage.getItem("fontFamily")
+                        document.getElementById("masterTitle").style.fontFamily = fontFamily;
+                        document.getElementById("menuTitle").style.fontFamily = fontFamily;
+                        document.getElementById("pageTitle1").style.fontFamily = fontFamily;
+                        document.getElementById("pageTitle2").style.fontFamily = fontFamily;
+                        document.getElementById("pageTitle3").style.fontFamily = fontFamily;
+                        document.getElementById("homeButton").style.fontFamily = fontFamily;
+                        document.getElementById("lockButton").style.fontFamily = fontFamily;
+                        document.getElementById("text1").style.fontFamily = fontFamily;
+                        document.getElementById("text2").style.fontFamily = fontFamily;
+                        document.getElementById("text3").style.fontFamily = fontFamily;
+                        document.getElementById("text4").style.fontFamily = fontFamily;
+                        document.getElementById("retryButton").style.fontFamily = fontFamily;
+                        document.getElementById("backLink").style.fontFamily = fontFamily;
+                        document.getElementById("checkStatusButton").style.fontFamily = fontFamily;
+                        if (sessionStorage.getItem("runtime") === "false") {
+                            document.getElementById("dtoken").style.fontFamily = fontFamily;
+                        } if (localStorage.getItem("retry") === "true") {
+                            document.getElementById("helpLink").style.fontFamily = fontFamily;
+                        }
+                        if (localStorage.getItem("retry") === "true") {
+                            if (sessionStorage.getItem("runtie") !== "false") {
+                                document.getElementById("helpLink").style.fontFamily = fontFamily;
+                            }
+                        }
+                    });
+
+                    //wenn kein token -> firstRunWizard.html
+                    if (localStorage.getItem("token") === null) {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        window.location.href = "./firstRunWizard.html?comeFrom=activate.html";
+                    //wenn token == UNSET -> firstRunWizard.html
+                    } if (localStorage.getItem("token") === "UNSET") {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        window.location.href = "./firstRunWizard.html?comeFrom=activate.html";
+                    //wenn status == RESET -> firstRunWizard.html
+                    } if (localStorage.getItem("status") === "reset") {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        log(page_19225476, 'msg reset by user');
+                        window.location.href = "./firstRunWizard.html?comeFrom=activate.html";
+                    //wenn kein Status -> firstRunWizard.html
+                    } if (localStorage.getItem("status") === null) {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        log(page_19225476, 'msg clean install');
+                        window.location.href = './firstRunWizard.html?comeFrom=redirect.html';
+                    }
+
+                    function getQueryParam(param) {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        return urlParams.get(param);
+                    }
+                    const comeFrom = getQueryParam('comeFrom');
+                    if (comeFrom) {
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_19225476, `comeFrom=${comeFrom}`);
+                        }
+                    } else {
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_19225476, "comeFrom=UNSET");
+                        }
+                    }
+
+                    //wenn runtime = false, leite auf sektion für nicht erlaubter token
+                    if (sessionStorage.getItem("runtime") !== "false") {
+                        setTimeout(() => {
+                            showText();
+                        }, 1300);
+                    } else {
+                        runtime_false();
+                    }
+
+                    //checke ob token aktiviert
+                    function check_activation() {
+                        cStatus = checkInternetConnection('https://cracky.ddns.net/?checkConnectionStatus');
+                        status = localStorage.getItem("status");
+                        if (status) {
+                            log(page_19225476, "check_activation");
+
+                            if (sessionStorage.getItem("runtime") === "true") {
+                                //if (sessionStorage.getItem("runtime") === "true") {
+                                localStorage.removeItem("retry");
+                                if (status === "FR") {
+                                    localStorage.setItem("status", "active");
+                                }
+                                window.location.href = "./index.html?comeFrom=activate.html";
+                                /*} else {
+                                    sessionStorage.removeItem("runtime");
+                                    log(page_19225476, "run_activation()", "CERTIFICATE INVALID!!");
+                                    console.log("cert invalid!");
+                                }*/
+                            } else if (status === "FR") {
+                                localStorage.setItem("status", "active");
+                                localStorage.removeItem("retry");
+                                window.location.href = "./index.html?comeFrom=activate.html";
+                            } else if (sessionStorage.getItem("runtime") === "false") {
+                                log(page_19225476, "check_activation", "runtime false");
+                                runtime_false();
+                            } else {
+                                run_activation();
+                            }
+                        } else {
+                            localStorage.clear();
+                            sessionStorage.clear();
+                            log(page_19225476, "run_activation", "status not found!");
+                            window.location.href = './firstRunWizard.html?comeFrom=activate.html';
+                        }
+                    }
+
+                    //aktiviere token -> wenn nicht aktiv
+                    function run_activation() {
+                        status = localStorage.getItem("status");
+                        if (status) {
+                            log(page_19225476, "run_activation");
+                            user_token = localStorage.getItem("token");
+
+                            //#348
+                            url = `${localStorage.getItem("msgserver_ip")}/msg-encrypt/android/activation/r/${user_token}`;
+                            localScript = document.getElementById("localScript");
+                            localScript.src = url;
+
+                            setTimeout(() => {
+                                //wenn nach der aktivierung true, leite auf index.html
+                                if (sessionStorage.getItem("runtime") === "true") {
+                                    if (sessionStorage.getItem("certificate") === "valid") {
+                                        if (localStorage.getItem("EHL") !== "false") {
+                                            log(page_19225476, "activated!");
+                                        }
+                                        localStorage.removeItem("retry");
+                                        window.location.href = "./index.html?comeFrom=activate.html";
+                                    } else {
+                                        sessionStorage.removeItem("runtime");
+                                        log(page_19225476, "run_activation()", "CERTIFICATE INVALID!!");
+                                        console.log("cert invalid!");
+                                    }
+                                } else {
+                                    log(page_19225476, "run_activation", "not activated!");
+                                    //wenn nach der aktivierung runtime immer alles andere als
+                                    //true und false ist dann showText()
+                                    if (sessionStorage.getItem("runtime") !== "true") {
+                                        showText();
+                                    } else if (sessionStorage.getItem("runtime") === "false") {
+                                        document.getElementById("errorPromt").classList.remove('active');
+                                        document.getElementById("help").classList.remove('active');
+                                        document.getElementById("notAllowed").classList.add('active');
+                                        document.getElementById("p2").style.display = 'none';
+                                    }
+                                }
+                            }, 500);//delay nicht runtersetzen!
+                        } else {
+                            localStorage.clear();
+                            sessionStorage.clear();
+                            log(page_19225476, "run_activation", "status not found!");
+                            window.location.href = './firstRunWizard.html?comeFrom=activate.html';
+                        }
+                    }
+
+                    function checkInternetConnection(url) {
+                    fetch(url, { mode: 'no-cors' })
+                        .then(() => {
+                            console.log("Internetverbindung vorhanden.");
+                        })
+                        .catch(() => {
+                            console.log("Keine Internetverbindung.");
+                            if (localStorage.getItem("EHL") !== "false") {
+                                log(page_19225476, `checkInternetConnection(${url})`, "Keine Internetverbindung.");
+                            }
+                            document.getElementById('MainActivity').style.display = 'none';
+                            document.getElementById('noInternet').style.display = 'block';
+                            document.getElementById('errorPromt').style.display = 'none';
+                            document.getElementById('notAllowed').style.display = 'none';
+                            document.getElementById('help').style.display = 'none';
+                            document.getElementById('p2').style.display = 'none';
+                        });
+                    }
+
+                    //zurück zur ersten Seite wenn stehen geblieben ist
+                    if (localStorage.getItem("firstRunST") === "started") {
+                        localStorage.clear();
+                        window.location.href = './firstRunWizard.html?comeFrom=activate.html';
+                    }
+
+                    //zeige aktivität wenn runtime false ist
+                    function runtime_false() {
+                        localStorage.removeItem("retry");
+                        status = sessionStorage.getItem("runtime");
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_19225476, "runtime_false[" + status + "]");
+                        }
+                        document.getElementById("errorPromt").classList.remove('active');
+                        document.getElementById("help").classList.remove('active');
+                        document.getElementById("notAllowed").classList.add('active');
+                        document.getElementById("p2").style.display = 'none';
+                        setTimeout(() => {
+                            document.getElementById("MainActivity").classList.remove('active');
+                            document.getElementById("errorPromt").classList.remove('active');
+                            document.getElementById("p2").style.display = "none";
+                        }, 1350); //check dass es wirklich ausgeführt wird
+                    }
+
+                    //prüfe Status des Tokens, setze retry und zeige ab 2. mal Hilfe
+                    function retry() {
+                        if (localStorage.getItem("retry") !== "true") {
+                            localStorage.setItem("retry", "true");
+                        }
+                        //location.reload();
+                        window.location.href = "activate.html";
+                    }
+
+                    function showText() {
+                        document.getElementById("MainActivity").classList.remove('active');
+                        document.getElementById("errorPromt").classList.add('active');
+                        document.getElementById("p2").style.display = "none";
+                    }
+
+                    //prüfe Status des Tokens und leite zurück zur ersten Seite wenn nicht aktiv
+                    function check_acc_status() {
+                        if (sessionStorage.getItem("runtime") === "false") {
+                            p_rtf();
+                            run_activation();
+                            setTimeout(() => {
+                                //location.reload();
+                                window.location.href = "activate.html";
+                            }, 500);
+                        } else {
+                            run_activation();
+                            setTimeout(() => {
+                                //location.reload();
+                                window.location.href = "activate.html";
+                            }, 500);
+                        }
+                    }
+
+                    //hier hilfe basiert auf retry, leite auf hilfe
+                    function getHelp() {
+                        autosync = 0;
+                        setTimeout(() => {
+                            document.getElementById("errorPromt").classList.remove('active');
+                            document.getElementById("help").classList.add('active');
+                            document.getElementById("p2").style.display = "none";
+                        }, 150);
+                    }
+                    function goBack() {
+                        autosync = 1;
+                        setTimeout(() => {
+                            document.getElementById("help").classList.remove('active');
+                            document.getElementById("errorPromt").classList.add('active');
+                        }, 150);
+                    }
+
+                    function lock() {
+                        vibrate('pattern', 'p_oc');
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_19225476, "lock");
+                        }
+                        sessionStorage.removeItem("encrypted");
+                        sessionStorage.removeItem("decrypted");
+                        localStorage.setItem("status", "locked");
+                        window.location.href = "./locked.html?comeFrom=activate.html";
+                    }
+                </script>
+                <script>
+                    //debug popup
+                    const debugPopupOverlay = document.getElementById("debugPopupOverlay");
+                    function openDebugPopup() {
+                        debugPopupOverlay.style.display = "block";
+                        let status = localStorage.getItem("status");
+                        let runtime = sessionStorage.getItem("runtime");
+                        let usermod = localStorage.getItem("user");
+                        let suv = localStorage.getItem("setupversion");
+                        let version = localStorage.getItem("version");
+                        let coav = sessionStorage.getItem("ov");
+                        let pid = localStorage.getItem("_lp-s-id");
+                        if (status) {
+                            document.getElementById("_status").innerText = status;
+                        }
+                        if (runtime) {
+                            document.getElementById("_runtime").innerText = runtime;
+                        }
+                        if (usermod) {
+                            document.getElementById("_usermod").innerText = usermod;
+                        }
+                        if (suv) {
+                            document.getElementById("_supvers").innerText = suv;
+                        }
+                        if (version) {
+                            document.getElementById("_version").innerText = version;
+                        }
+                        if (coav) {
+                            coav_to_show = "v" + coav;
+                            document.getElementById("_cuoavrs").innerText = coav_to_show;
+                        }
+                        if (pid) {
+                            document.getElementById("_lp-s-id").innerText = pid;
+                        }
+                        autosync = 0;
+                    }
+                    function closeDebugPopup(reason) {
+                        debugPopupOverlay.style.display = "none";
+                        delete debugInfo;
+                        delete debug_info_show;
+                        autosync = 1;
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_19225476, `closeErrPopup(${reason})`);
+                        }
+                    }
+                </script>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

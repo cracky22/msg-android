@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>popup error</title>
+  </head>
+
+  <style>
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .popup {
+      font-family: Arial, sans-serif;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .popup-content {
+      text-align: center;
+    }
+
+    .popup .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .popup button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+
+  <body>
+    <div>
+      <center>
+        <h1>webseite error.html</h1>
+        <p>
+          Z0FBQUFBQm1wZzNiT2d6Z0gzdHZjZGFtMFdVbnhNUEJoSj
+          <br />VOOHA3TDZFQy1aMmlkRXdtLW50VDMwWnZUbmF1SmZOY<br />
+          nQ5UGlVSFVKc1JGTVBDMlJKT2hTdWxuWnhyWGRRZ2c9PQ
+        </p>
+        <button onclick="openPopup();">open popup</button>
+      </center>
+    </div>
+
+    <div class="popup-overlay" id="errPopupOverlay" onclick="closePopupFunc();">
+      <div class="popup" id="errPopup" onclick="event.stopPropagation();">
+        <span class="close" onclick="closePopupFunc();">&times;</span>
+        <div class="popup-content">
+          <h3>Ein Fehler ist aufgetreten</h3>
+          <p>base64 encoding error</p>
+          <button onclick="alert('hallo');">an den Entwickler melden</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const errPopupOverlay = document.getElementById("errPopupOverlay");
+      function openPopup() {
+        errPopupOverlay.style.display = "block";
+      }
+      function closePopupFunc() {
+        errPopupOverlay.style.display = "none";
+      }
+    </script>
+  </body>
+</html>

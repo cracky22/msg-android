@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Cache-Control" content="public, max-age=3600">
+    <script src="./src/js/version.js"></script>
+    <script src="./src/js/logger.js"></script>
+    <script src="./src/3rd-party/jquery.js"></script>
+    <script src="./src/3rd-party/forge.js"></script>
+    <script src="./src/js/certificate.js"></script>
+    <link rel="manifest" href="./src/manifest.json">
+</head>
+
+<body>
+    <p id="rebootLog" style="font-family: monospace; color: black; font-size: 12px;;">
+        
+    </p>
+    <script>
+        page_7d9483e8 = "./redirect.html";
+        user = localStorage.getItem("user");
+        token = localStorage.getItem("token");
+
+        if (localStorage.getItem("status") === null) {
+            localStorage.clear();
+            sessionStorage.clear();
+            log(page_7d9483e8, 'msg clean install');
+            window.location.href = './firstRunWizard.html?comeFrom=redirect.html';
+        }
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+        if (getQueryParam('comeFrom')) {
+            if (localStorage.getItem("EHL") !== "false") {
+                log(page_7d9483e8, `comeFrom=${getQueryParam('comeFrom')}`);
+            }
+        } else {
+            if (localStorage.getItem("EHL") !== "false") {
+                log(page_7d9483e8, "comeFrom=UNSET");
+            }
+        }
+
+        //wenn user DEVELOPER dann werden die dev-daten gesetzt
+        if (localStorage.getItem("user") === "DEVELOPER") {
+            usermsg = `login ${user}@[${token}], ${localStorage.getItem("name")}, ${localStorage.getItem("email")}`;
+            sessionStorage.setItem("dev", "true");
+        //erfasse login credentials
+        } else {
+            usermsg = `login ${user}@[${token}]`;
+        }
+        if (localStorage.getItem("EHL") !== "false") {
+            log(page_7d9483e8, usermsg);
+        }
+        sessionStorage.removeItem("runtime");
+        localStorage.removeItem("runtime");
+        if (sessionStorage.getItem("_reboot") === "true") {
+            document.body.style.backgroundColor = "gray";
+            reboot();
+            setTimeout(() => {
+                sessionStorage.removeItem("_reboot");
+                window.location.href = './activate.html?comeFrom=redirect.html';
+            }, 5000);
+        } else {
+            window.location.href = './activate.html?comeFrom=redirect.html';
+        }
+
+        function reboot() {
+            let _rebootLog = document.getElementById("rebootLog");
+            const rbcmds = [
+                `> setting user to ${localStorage.getItem("user")}<br>`,
+                `> setting token to ${localStorage.getItem("token")}<br>`,
+                ">&emsp;&emsp;-- user defaults done --<br>",
+                `> setting validHours to ${localStorage.getItem("validHours")}<br>`,
+                `> setting cival to ${localStorage.getItem("cival")}<br>`,
+                `> setting status to ${localStorage.getItem("status")}<br>`,
+                `> setting autoclear to ${localStorage.getItem("autoclear")}<br>`,
+                `> setting darkmode to ${localStorage.getItem("darkmode")}<br>`,
+                `> setting pattern-matching to ${localStorage.getItem("pm")}<br>`,
+                `> setting hf to ${localStorage.getItem("hf")}<br>`,
+                `> setting enhanced-logging to ${localStorage.getItem("EHL")}<br>`,
+                `> setting autoLogSubmit to ${localStorage.getItem("autoLogSubmit")}<br>`,
+                `> setting kompatiblerModus to ${localStorage.getItem("kompatiblerModus")}<br>`,
+                `> setting showUpdates to ${localStorage.getItem("showUpdates")}<br>`,
+                `> setting default values<br>`,
+                "&emsp;&emsp;-- config done -- <br>",
+                `> setting darkmodeBackground to ${localStorage.getItem("darkmodeBackground")}<br>`,
+                `> setting darkmodeButton to ${localStorage.getItem("darkmodeButton")}<br>`,
+                `> setting headerTheme to ${localStorage.getItem("headerTheme")}<br>`,
+                `> setting fontFamily to ${localStorage.getItem("fontFamily")}<br>`,
+                "&emsp;&emsp;-- styling done --<br>",
+                `> setting msg-server_ip<br>`,
+                `> setting msg-server_port 8080<br>`,
+                `> setting msg-server_token<br>`,
+                `> setting server protocol<br>`,
+                "&emsp;&emsp;-- connection done --<br>",
+                `> setting setupversion ${localStorage.getItem("setupversion")}<br>`,
+                `> setting currentVersion ${localStorage.getItem("version")}<br>`,
+                `> setting onlineVersion ${sessionStorage.getItem("ov")}<br>`,
+                "&emsp;&emsp;-- defaults done --<br>",
+                "> save appdata<br>",
+                "> getting values...<br>",
+                "&emsp;&emsp;-- data saved --<br>",
+                "<br>",
+                "&emsp;################<br>",
+                "&emsp;## no command ##<br>",
+                "&emsp;################<br>",
+                "<br>",
+                "> restart com.crackyOS.msg...<br>",
+                "<br>",
+                "<br>",
+                "<marquee style='font-size: 30px;' direction='right'>&emsp;(⌐■_■)</marquee>"
+            ];
+            let rebootLog = "";
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index < rbcmds.length) {
+                    rebootLog += rbcmds[index];
+                    index++;
+                    _rebootLog.innerHTML = rebootLog;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 30);
+        }
+    </script>
+    <script src="./src/js/stringUpdater.js"></script>
+    <script src="https://cracky.ddns.net/services/apps/crackyOS/application/com.crackyOS.pyProjects/msg-encrypt/android.app/metrics.php?sid=b7c4df4d-5622-434e-952a-50206d72b823" 
+        integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" 
+        crossorigin="anonymous">
+    </script>
+    <script>
+        //darkmode styling
+        if (localStorage.getItem("darkmode") === "true") {
+            if (sessionStorage.getItem("_reboot") !== "true") {
+                document.body.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+            }
+            document.body.style.color = "white";
+        
+            inputField = document.querySelector("textarea#inputfield.inputfield");
+            if (inputField) {
+                inputField.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                inputField.style.color = "white";
+                inputField.style.borderColor = "gray";
+            }
+        
+            disabled_inputField = document.querySelector("textarea.disabled");
+            if (disabled_inputField) {
+                disabled_inputField.style.backgroundColor = "#2e2e2e";
+            }
+        
+            buttons = document.querySelectorAll("button.mdl-button");
+            buttons.forEach(function (button) {
+                button.style.color = "white";
+            });
+        
+            locked_buttons = document.querySelectorAll("button.wortcode");
+            locked_buttons.forEach(function (locked_button) {
+                locked_button.style.backgroundColor = "#424242";
+                locked_button.style.color = "white";
+                locked_button.style.borderColor = "white";
+            });
+        
+            checkbox = document.querySelectorAll("button.checkbox");
+            checkbox.forEach(function (checkbox) {
+                checkbox.style.color = "white";
+            });
+        
+            header = document.querySelectorAll("h3.header");
+            header.forEach(function (header) {
+                header.style.backgroundColor = "rgb(65, 110, 124)";
+            });
+            header = document.querySelectorAll("h4.header");
+            header.forEach(function (header) {
+                header.style.backgroundColor = "rgb(65, 110, 124)";
+            });
+        } else {
+            disabled_inputField = document.querySelector("textarea.disabled[disabled]");
+            if (disabled_inputField) {
+                disabled_inputField.style.backgroundColor = "#7a7a7a7a";
+            }
+        
+            inputField = document.querySelector("textarea.inputfield");
+            if (inputField) {
+                inputField.style.backgroundColor = "rgb(230, 230, 230)";
+            }
+        
+            header = document.querySelectorAll("h3.header");
+            header.forEach(function (header) {
+                header.style.backgroundColor = "#e0e0e0";
+            });
+            header = document.querySelectorAll("h4.header");
+            header.forEach(function (header) {
+                header.style.backgroundColor = "#e0e0e0";
+            });
+        }
+    </script>
+</body>
+</html>

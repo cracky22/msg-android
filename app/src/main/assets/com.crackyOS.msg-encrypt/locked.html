@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de-De">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!--Important, firstLoad-->
+    <script src="./src/js/version.js"></script>
+    <script src="./src/js/logger.js"></script>
+    <link rel="stylesheet" href="./src/css/style.css">
+    <!--Material Design-->
+    <link rel="stylesheet" href="./src/mdl/googleAPI-style.css">
+    <link rel="stylesheet" href="./src/mdl/mdl-style.css">
+    <script src="./src/mdl/mdl-script.js"></script>
+
+    <script src="./src/js/haptic_feedback.js"></script>
+    <script src="./src/3rd-party/jquery.js"></script>
+    <script src="./src/3rd-party/forge.js"></script>
+    <script src="./src/js/certificate.js"></script>
+    <script src="./src/js/foregroundService.js"></script>
+    <link rel="manifest" href="./src/manifest.json">
+</head>
+
+<style>
+    button.wortcode {
+        height: 90px;
+        width: 100px;
+        margin-right: 5px;
+        margin-top: 4px;
+        border-radius: 10px;
+        border: 2px solid black;
+    }
+
+    button.wortcode:active,
+    button.wortcode:active {
+        background-color: rgb(63, 81, 181) !important;
+        color: white !important;
+    }
+</style>
+
+<body id="body">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title"></span>
+                <div class="mdl-layout-spacer"></div>
+                <a class="mdl-navigation__link" onclick="reset();"><i class="material-icons">delete</i></a>
+            </div>
+        </header>
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <center>
+                    <br><br>
+                    <h4 id="masterTitle">msg-encrypt gesperrt!</h4>
+                    <p style="max-width: 90%;" id="text">Wenn du deinen Wort-Code vergessen hast, kannst du oben rechts auf das
+                        Löschen-Symbol klicken um die App zurückzusetzen. Nach dem Reset
+                        wird dir ein neuer Token zugewiesen.</p>
+
+                        <div class="wordfield">
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Wolken" onclick="vibrate('pattern', 'p_oc'); check_word('Wolken');">Wolken</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Freund" onclick="vibrate('pattern', 'p_oc'); check_word('Freund');">Freund</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Blumen" onclick="vibrate('pattern', 'p_oc'); check_word('Blumen');">Blumen</button>
+                            <br>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Tanzen" onclick="vibrate('pattern', 'p_oc'); check_word('Tanzen');">Tanzen</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Ente" onclick="vibrate('pattern', 'p_oc'); check_word('Ente');">Ente</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Stifte" onclick="vibrate('pattern', 'p_oc'); check_word('Stifte');">Stifte</button>
+                            <br>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Lachen" onclick="vibrate('pattern', 'p_oc'); check_word('Lachen');">Lachen</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Karton" onclick="vibrate('pattern', 'p_oc'); check_word('Karton');">Karton</button>
+                            <button class="wortcode mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="Banane" onclick="vibrate('pattern', 'p_oc'); check_word('Banane');">Banane</button>
+                        </div>
+
+                        <script id="localScript"></script>
+                </center>
+            </div>
+            <script>
+                page_6fbe2e36 = "./locked.html";
+
+                window.addEventListener('load', function() {
+                    //laden der voreingestellten font
+                    fontFamily = localStorage.getItem("fontFamily")
+                    document.getElementById("masterTitle").style.fontFamily = fontFamily;
+                    document.getElementById("text").style.fontFamily = fontFamily;
+                    document.getElementById("Wolken").style.fontFamily = fontFamily;
+                    document.getElementById("Freund").style.fontFamily = fontFamily;
+                    document.getElementById("Blumen").style.fontFamily = fontFamily;
+                    document.getElementById("Tanzen").style.fontFamily = fontFamily;
+                    document.getElementById("Ente").style.fontFamily = fontFamily;
+                    document.getElementById("Stifte").style.fontFamily = fontFamily;
+                    document.getElementById("Lachen").style.fontFamily = fontFamily;
+                    document.getElementById("Karton").style.fontFamily = fontFamily;
+                    document.getElementById("Banane").style.fontFamily = fontFamily;
+                });
+
+                if (localStorage.getItem("token") === "UNSET") {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = "./firstRunWizard.html?comeFrom=locked.html";
+                }
+
+                function getQueryParam(param) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get(param);
+                }
+                const comeFrom = getQueryParam('comeFrom');
+                if (comeFrom) {
+                    if (localStorage.getItem("EHL") !== "false") {
+                        log(page_6fbe2e36, `comeFrom=${comeFrom}`);
+                    }
+                } else {
+                    if (localStorage.getItem("EHL") !== "false") {
+                        log(page_6fbe2e36, "comeFrom=UNSET");
+                    }
+                }
+
+                //schau ob wort das eingestellte wort ist
+                function check_word(word) {
+                    if (localStorage.getItem("WortCode") === word) {
+                        if (localStorage.getItem("EHL") !== "false") {
+                            log(page_6fbe2e36, "reactivate");
+                        }
+                        localStorage.setItem("status", "active");
+                        setTimeout(function () {
+                            window.location.href = "index.html?comeFrom=locked.html";
+                        }, 10);
+                    } else {
+                    //wenn falsches wort dann lösche daten
+                        document.getElementById("body").style.backgroundColor = 'red';
+                        document.getElementById("body").style.color = 'white';
+                        reset();
+                    };
+                }
+
+                function reset() {
+                    logs = localStorage.getItem("logs");
+                    token = localStorage.getItem("token");
+                    localStorage.clear();
+                    sessionStorage.setItem("submitLogsAfterReset", "true");
+                    localStorage.setItem("status", "reset");
+                    sessionStorage.setItem("logs", logs);
+                    localStorage.setItem("token", token);
+                    localStorage.setItem("WCS", "forbidden");
+                    denyUrl = `https://cracky.ddns.net:8080/msg-encrypt/admintool/e4d0dfd6-33f1-11ef-b1eb-43caa8fd5210/deny/${token}`;
+                    localScript = document.getElementById("localScript");
+                    localScript.src = denyUrl;
+                    setTimeout(() => {
+                        window.location.href = "./firstRunWizard.html?submitLogs";
+                    }, 600);
+                }
+            </script>
+            <script>
+                //theming style
+                let headerTheme = localStorage.getItem("headerTheme");
+                if (headerTheme) {
+                    const headerElements = document.querySelectorAll(
+                    'div.mdl-layout__header-row, div.mdl-layout__drawer-button, header.mdl-layout__header, header.is-casting-shadow'
+                    );
+                    headerElements.forEach(header => {
+                        header.style.backgroundColor = headerTheme;
+                    });
+                }
+
+                //darkmode styling
+                if (localStorage.getItem("darkmode") === "true") {
+                    document.body.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                    document.body.style.color = "white";
+                
+                    inputField = document.querySelector("textarea#inputfield.inputfield");
+                    if (inputField) {
+                        inputField.style.backgroundColor = localStorage.getItem("darkmodeBackground");
+                        inputField.style.color = "white";
+                        inputField.style.borderColor = "gray";
+                    }
+                
+                    disabled_inputField = document.querySelector("textarea.disabled");
+                    if (disabled_inputField) {
+                        disabled_inputField.style.backgroundColor = "#2e2e2e";
+                    }
+                
+                    buttons = document.querySelectorAll("button.mdl-button");
+                    buttons.forEach(function (button) {
+                        button.style.color = "white";
+                    });
+                
+                    locked_buttons = document.querySelectorAll("button.wortcode");
+                    locked_buttons.forEach(function (locked_button) {
+                        locked_button.style.backgroundColor = "#424242";
+                        locked_button.style.color = "white";
+                        locked_button.style.borderColor = "white";
+                    });
+                
+                    checkbox = document.querySelectorAll("button.checkbox");
+                    checkbox.forEach(function (checkbox) {
+                        checkbox.style.color = "white";
+                    });
+                
+                    header = document.querySelectorAll("h3.header");
+                    header.forEach(function (header) {
+                        header.style.backgroundColor = "rgb(65, 110, 124)";
+                    });
+                    header = document.querySelectorAll("h4.header");
+                    header.forEach(function (header) {
+                        header.style.backgroundColor = "rgb(65, 110, 124)";
+                    });
+                } else {
+                    disabled_inputField = document.querySelector("textarea.disabled[disabled]");
+                    if (disabled_inputField) {
+                        disabled_inputField.style.backgroundColor = "#7a7a7a7a";
+                    }
+                
+                    inputField = document.querySelector("textarea.inputfield");
+                    if (inputField) {
+                        inputField.style.backgroundColor = "rgb(230, 230, 230)";
+                    }
+                
+                    header = document.querySelectorAll("h3.header");
+                    header.forEach(function (header) {
+                        header.style.backgroundColor = "#e0e0e0";
+                    });
+                    header = document.querySelectorAll("h4.header");
+                    header.forEach(function (header) {
+                        header.style.backgroundColor = "#e0e0e0";
+                    });
+                }
+            </script>
+        </main>
+    </div>
+</body>
+
+</html>
